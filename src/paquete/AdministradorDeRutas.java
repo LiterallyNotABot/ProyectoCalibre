@@ -58,56 +58,7 @@ public class AdministradorDeRutas {
 	            }
 	        }
 	       
-	        /*
-	        while (true) {
-	            System.out.println("Introduce una ciudad de origen (o escribe 'fin' para terminar):");
-	            String origenNombre = scanner.nextLine().trim();
-	            if (origenNombre.equalsIgnoreCase("fin")) {
-	                break;
-	            }
-
-	            System.out.println("Introduce una ciudad de destino:");
-	            String destinoNombre = scanner.nextLine().trim();
-
-	            Ciudad origen = ciudades.stream().filter(c -> c.getNombre().equalsIgnoreCase(origenNombre)).findFirst().orElse(null);
-	            Ciudad destino = ciudades.stream().filter(c -> c.getNombre().equalsIgnoreCase(destinoNombre)).findFirst().orElse(null);
-	            
-
-	            	
-	            if (origen == null || destino == null) {
-	                System.out.println("Ciudad de origen o destino no encontrada. Por favor, verifica.");
-	                continue;
-	            }
-	            
-            	
-            if (origen.equals(destino)) {
-                System.out.println("El origen debe ser distinto al destino");
-                continue;
-            }
-
-	            System.out.println("Introduce el tipo de vehículo (tren, avion, coche, barco):");
-	            String tipoVehiculo = scanner.nextLine().trim().toLowerCase();
-
-	            switch (tipoVehiculo) {
-	                case "tren":
-	                    conexiones.add(new Tren(origen, destino));
-	                    break;
-	                case "avion":
-	                    conexiones.add(new Avion(origen, destino));
-	                    break;
-	                case "coche":
-	                    conexiones.add(new Coche(origen, destino));
-	                    break;
-	                case "barco":
-	                    conexiones.add(new Barco(origen, destino));
-	                    break;
-	                default:
-	                    System.out.println("Tipo de vehículo no válido.");
-	            }
-	        }
-	        
-	        */
-
+	       
 	        System.out.println("Introduce la ciudad de origen:");
 	        String ciudadOrigenNombre = scanner.nextLine().trim();
 	        Ciudad ciudadOrigen = ciudades.stream().filter(c -> c.getNombre().equalsIgnoreCase(ciudadOrigenNombre)).findFirst().orElse(null);
@@ -122,7 +73,7 @@ public class AdministradorDeRutas {
 	        }
 
 	        CalculadorDeRuta calculador = new CalculadorDeRuta(conexiones);
-	        calculador.encontrarRuta(ciudadOrigen, ciudadDestino);
+	        calculador.encontrarRutas(ciudadOrigen, ciudadDestino);
 	    
 	  }
 	}

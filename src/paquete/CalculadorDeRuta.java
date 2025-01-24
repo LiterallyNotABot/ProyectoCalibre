@@ -1,8 +1,7 @@
 package paquete;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+
+
+import java.util.*;
 
 public class CalculadorDeRuta {
     private List<Conexion> conexiones;
@@ -11,38 +10,66 @@ public class CalculadorDeRuta {
         this.conexiones = conexiones;
     }
 
-    public void encontrarRuta(Ciudad origen, Ciudad destino) {
-        Set<Ciudad> visitadas = new HashSet<>();
-        List<Conexion> ruta = new ArrayList<>();
+    public void encontrarRutas(Ciudad origen, Ciudad destino) {
+        List<List<Conexion>> todasLasRutas = buscarRutas(origen, destino);
 
-        if (buscarRuta(origen, destino, visitadas, ruta)) {
-            for (Conexion conexion : ruta) {
-                System.out.println(conexion.obtenerDetalles());
-            }
-            System.out.println("¡Felicidades, has llegado a tu destino!");
-        } else {
+        if (todasLasRutas.isEmpty()) {
             System.out.println("No existe una ruta válida entre las ciudades.");
+        } else {
+            todasLasRutas.sort(Comparator.comparingInt(List::size));
+
+            int contador = 1;
+            for (List<Conexion> ruta : todasLasRutas) {
+                System.out.println("Ruta " + contador + " (" + ruta.size() + " escala(s)):");
+                for (Conexion conexion : ruta) {
+                    System.out.println("  " + conexion.obtenerDetalles());
+                }
+                System.out.println();
+                contador++;
+            }
         }
     }
 
-    private boolean buscarRuta(Ciudad actual, Ciudad destino, Set<Ciudad> visitadas, List<Conexion> ruta) {
-        if (actual.equals(destino)) {
-            return true;
-        }
+    private List<List<Conexion>> buscarRutas(Ciudad origen, Ciudad destino) {
+        List<List<Conexion>> rutasEncontradas = new ArrayList<>();
+        Queue<Nodo> cola = new LinkedList<>();
 
-        visitadas.add(actual);
+        cola.add(new Nodo(origen, new ArrayList<>(), new HashSet<>()));
 
-        for (Conexion conexion : conexiones) {
-            if (conexion.origen.equals(actual) && !visitadas.contains(conexion.destino)) {
-                ruta.add(conexion);
-                if (buscarRuta(conexion.destino, destino, visitadas, ruta)) {
-                    return true;
+        while (!cola.isEmpty()) {
+            Nodo actual = cola.poll();
+
+            if (actual.ciudad.equals(destino)) {
+                rutasEncontradas.add(new ArrayList<>(actual.ruta));
+                continue;
+            }
+
+            for (Conexion conexion : conexiones) {
+                if (conexion.origen.equals(actual.ciudad) && !actual.visitadas.contains(conexion.destino)) {
+                    List<Conexion> nuevaRuta = new ArrayList<>(actual.ruta);
+                    nuevaRuta.add(conexion);
+
+                    Set<Ciudad> nuevasVisitadas = new HashSet<>(actual.visitadas);
+                    nuevasVisitadas.add(conexion.destino);
+
+                    cola.add(new Nodo(conexion.destino, nuevaRuta, nuevasVisitadas));
                 }
-                ruta.remove(ruta.size() - 1);
             }
         }
 
-        visitadas.remove(actual);
-        return false;
+        return rutasEncontradas;
+    }
+
+    private static class Nodo {
+        Ciudad ciudad;
+        List<Conexion> ruta;
+        Set<Ciudad> visitadas;
+
+        public Nodo(Ciudad ciudad, List<Conexion> ruta, Set<Ciudad> visitadas) {
+            this.ciudad = ciudad;
+            this.ruta = ruta;
+            this.visitadas = visitadas;
+        }
     }
 }
+
